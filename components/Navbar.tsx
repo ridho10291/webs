@@ -8,11 +8,11 @@ import { ThemeToggle } from "./ThemeToggle";
 import { siteConfig } from "@/data/site";
 
 const links = [
-  { href: "#tentang", label: "Tentang" },
-  { href: "#skills", label: "Keahlian" },
-  { href: "#proyek", label: "Project" },
-  { href: "#buku-tamu", label: "Buku Tamu" },
-  { href: "#kontak", label: "Kontak" },
+  { href: "#tentang", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#proyek", label: "Projects" },
+  { href: "#feedback", label: "Feedback" },
+  { href: "#kontak", label: "Contact" },
 ];
 
 export function Navbar() {

@@ -29,7 +29,6 @@ export function CursorFollower() {
       targetRef.current = { x: e.clientX, y: e.clientY };
       setVisible(true);
 
-      // Add trail point
       trailsRef.current.push({
         x: e.clientX,
         y: e.clientY,
@@ -50,12 +49,10 @@ export function CursorFollower() {
     window.addEventListener("mouseleave", handleLeave);
 
     const animate = () => {
-      // Smooth follow
       currentRef.current.x += (targetRef.current.x - currentRef.current.x) * 0.3;
       currentRef.current.y += (targetRef.current.y - currentRef.current.y) * 0.3;
       setPos({ x: currentRef.current.x, y: currentRef.current.y });
 
-      // Decay trails
       trailsRef.current = trailsRef.current.map(t => ({
         ...t,
         life: t.life - 0.05,
@@ -79,21 +76,29 @@ export function CursorFollower() {
   return (
     <>
       {visible && (
-        <>
+        <motion.div
+          style={{
+            left: pos.x,
+            top: pos.y,
+            transform: "translate(-50%, -50%)",
+          }}
+          className="cursor-wrapper"
+        >
           {/* Trails */}
           {trailsRef.current.map((trail, i) => (
             <motion.div
               key={i}
               className="cursor-trail"
               style={{
-                left: trail.x,
-                top: trail.y,
+                left: trail.x - pos.x,
+                top: trail.y - pos.y,
                 width: trail.size,
                 height: trail.size,
                 background: trail.color,
                 opacity: trail.life * 0.6,
               }}
-              animate={{ scale: [0, 1], opacity: [trail.life, 0] }}
+              initial={{ scale: 0, opacity: trail.life }}
+              animate={{ scale: 1, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
             />
           ))}
@@ -101,7 +106,7 @@ export function CursorFollower() {
           {/* Outer glow ring */}
           <motion.div
             className="cursor-glow"
-            style={{ left: pos.x, top: pos.y }}
+            initial={{ scale: 0, opacity: 0 }}
             animate={{
               scale: clicking ? 2.5 : 1.8,
               opacity: clicking ? 0.15 : 0.08,
@@ -112,7 +117,7 @@ export function CursorFollower() {
           {/* Middle ring */}
           <motion.div
             className="cursor-ring"
-            style={{ left: pos.x, top: pos.y }}
+            initial={{ scale: 0, opacity: 0 }}
             animate={{
               scale: clicking ? 1.5 : 1,
               opacity: clicking ? 0.5 : 0.3,
@@ -124,7 +129,7 @@ export function CursorFollower() {
           {/* Core dot */}
           <motion.div
             className="cursor-dot"
-            style={{ left: pos.x, top: pos.y }}
+            initial={{ scale: 0 }}
             animate={{
               scale: clicking ? 0.5 : 1,
               rotate: clicking ? 45 : 0,
@@ -134,49 +139,57 @@ export function CursorFollower() {
             }}
             transition={{ duration: 0.08, ease: [0.34, 1.56, 0.64, 1] }}
           />
-        </>
+        </motion.div>
       )}
       <style jsx global>{`
-        .cursor-dot {
+        .cursor-wrapper {
           position: fixed;
+          pointer-events: none;
+          z-index: 9999;
+          will-change: transform;
+        }
+        .cursor-dot {
+          position: absolute;
+          left: 50%;
+          top: 50%;
           width: 10px;
           height: 10px;
           border-radius: 50%;
           background: linear-gradient(135deg, var(--primary), var(--accent));
           pointer-events: none;
-          z-index: 9999;
           transform: translate(-50%, -50%);
           mix-blend-mode: difference;
           will-change: transform, box-shadow;
         }
         .cursor-ring {
-          position: fixed;
+          position: absolute;
+          left: 50%;
+          top: 50%;
           width: 36px;
           height: 36px;
           border-radius: 50%;
           border: 2px solid var(--primary);
           pointer-events: none;
-          z-index: 9998;
           transform: translate(-50%, -50%);
           will-change: transform, opacity, border-color;
           transition: border-color 0.1s ease;
         }
         .cursor-glow {
-          position: fixed;
+          position: absolute;
+          left: 50%;
+          top: 50%;
           width: 80px;
           height: 80px;
           border-radius: 50%;
           background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
           pointer-events: none;
-          z-index: 9997;
           transform: translate(-50%, -50%);
           will-change: transform, opacity;
         }
         .cursor-trail {
-          position: fixed;
+          position: absolute;
           border-radius: 50%;
           pointer-events: none;
-          z-index: 9996;
           transform: translate(-50%, -50%);
           mix-blend-mode: screen;
           will-change: transform, opacity, width, height;
