@@ -32,30 +32,28 @@ export function PageLoader() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
         <motion.div
-          className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent"
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+          className="relative h-16 w-16"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
         >
-          <motion.svg
-            className="h-10 w-10 text-white"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 1, delay: 0.4, ease: "easeInOut" }}
-          >
-            <path d="M12 8V4H8" />
-            <rect width="16" height="12" x="4" y="8" rx="2" />
-            <path d="M2 14h2" />
-            <path d="M20 14h2" />
-            <path d="M15 13v2" />
-            <path d="M9 13v2" />
-          </motion.svg>
+          <motion.div
+            className="absolute inset-0 rounded-full border-2 border-transparent border-t-primary border-r-accent"
+            initial={{ rotate: 0 }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute inset-1.5 rounded-full border border-primary/30"
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <motion.div
+              className="h-2 w-2 rounded-full bg-gradient-to-r from-primary to-accent"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, duration: 0.4 }}
+            />
+          </div>
         </motion.div>
 
         <motion.div
