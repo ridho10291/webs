@@ -33,10 +33,10 @@ export function CursorFollower() {
         x: e.clientX,
         y: e.clientY,
         life: 1,
-        size: 6 + Math.random() * 4,
+        size: 5 + Math.random() * 3,
         color: Math.random() > 0.5 ? "var(--primary)" : "var(--accent)",
       });
-      if (trailsRef.current.length > 30) trailsRef.current.shift();
+      if (trailsRef.current.length > 20) trailsRef.current.shift();
     };
 
     const handleDown = () => setClicking(true);
@@ -49,14 +49,14 @@ export function CursorFollower() {
     window.addEventListener("mouseleave", handleLeave);
 
     const animate = () => {
-      currentRef.current.x += (targetRef.current.x - currentRef.current.x) * 0.3;
-      currentRef.current.y += (targetRef.current.y - currentRef.current.y) * 0.3;
+      currentRef.current.x += (targetRef.current.x - currentRef.current.x) * 0.25;
+      currentRef.current.y += (targetRef.current.y - currentRef.current.y) * 0.25;
       setPos({ x: currentRef.current.x, y: currentRef.current.y });
 
       trailsRef.current = trailsRef.current.map(t => ({
         ...t,
-        life: t.life - 0.05,
-        size: t.size * 0.96,
+        life: t.life - 0.06,
+        size: t.size * 0.94,
       })).filter(t => t.life > 0 && t.size > 0.5);
 
       rafRef.current = requestAnimationFrame(animate);
@@ -76,120 +76,59 @@ export function CursorFollower() {
   return (
     <>
       {visible && (
-        <motion.div
-          style={{
-            left: pos.x,
-            top: pos.y,
-            transform: "translate(-50%, -50%)",
-          }}
-          className="cursor-wrapper"
-        >
+        <>
+          {/* Core dot */}
+          <motion.div
+            className="cursor-dot"
+            style={{ left: pos.x, top: pos.y }}
+            initial={{ scale: 0 }}
+            animate={{
+              scale: clicking ? 0.6 : 1,
+              boxShadow: clicking
+                ? "0 0 25px var(--secondary), 0 0 50px var(--secondary)"
+                : "0 0 15px var(--primary), 0 0 30px var(--primary)",
+            }}
+            transition={{ duration: 0.08, ease: [0.34, 1.56, 0.64, 1] }}
+          />
+
           {/* Trails */}
           {trailsRef.current.map((trail, i) => (
             <motion.div
               key={i}
               className="cursor-trail"
               style={{
-                left: trail.x - pos.x,
-                top: trail.y - pos.y,
+                left: trail.x,
+                top: trail.y,
                 width: trail.size,
                 height: trail.size,
                 background: trail.color,
-                opacity: trail.life * 0.6,
+                opacity: trail.life * 0.7,
               }}
               initial={{ scale: 0, opacity: trail.life }}
               animate={{ scale: 1, opacity: 0 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
             />
           ))}
-
-          {/* Outer glow ring */}
-          <motion.div
-            className="cursor-glow"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{
-              scale: clicking ? 2.5 : 1.8,
-              opacity: clicking ? 0.15 : 0.08,
-            }}
-            transition={{ duration: 0.15, ease: [0.34, 1.56, 0.64, 1] }}
-          />
-
-          {/* Middle ring */}
-          <motion.div
-            className="cursor-ring"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{
-              scale: clicking ? 1.5 : 1,
-              opacity: clicking ? 0.5 : 0.3,
-              borderColor: clicking ? "var(--secondary)" : "var(--primary)",
-            }}
-            transition={{ duration: 0.1, ease: [0.34, 1.56, 0.64, 1] }}
-          />
-
-          {/* Core dot */}
-          <motion.div
-            className="cursor-dot"
-            initial={{ scale: 0 }}
-            animate={{
-              scale: clicking ? 0.5 : 1,
-              rotate: clicking ? 45 : 0,
-              boxShadow: clicking
-                ? "0 0 30px var(--secondary), 0 0 60px var(--secondary)"
-                : "0 0 20px var(--primary), 0 0 40px var(--primary)",
-            }}
-            transition={{ duration: 0.08, ease: [0.34, 1.56, 0.64, 1] }}
-          />
-        </motion.div>
+        </>
       )}
       <style jsx global>{`
-        .cursor-wrapper {
-          position: fixed;
-          pointer-events: none;
-          z-index: 9999;
-          will-change: transform;
-        }
         .cursor-dot {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          width: 10px;
-          height: 10px;
+          position: fixed;
+          width: 8px;
+          height: 8px;
           border-radius: 50%;
           background: linear-gradient(135deg, var(--primary), var(--accent));
           pointer-events: none;
+          z-index: 9999;
           transform: translate(-50%, -50%);
           mix-blend-mode: difference;
           will-change: transform, box-shadow;
         }
-        .cursor-ring {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          border: 2px solid var(--primary);
-          pointer-events: none;
-          transform: translate(-50%, -50%);
-          will-change: transform, opacity, border-color;
-          transition: border-color 0.1s ease;
-        }
-        .cursor-glow {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
-          background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-          pointer-events: none;
-          transform: translate(-50%, -50%);
-          will-change: transform, opacity;
-        }
         .cursor-trail {
-          position: absolute;
+          position: fixed;
           border-radius: 50%;
           pointer-events: none;
+          z-index: 9998;
           transform: translate(-50%, -50%);
           mix-blend-mode: screen;
           will-change: transform, opacity, width, height;
