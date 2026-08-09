@@ -225,9 +225,9 @@ export function Hero() {
               </motion.div>
 
               {[
-                { bg: "linear-gradient(135deg, hsl(160 85% 50%), hsl(180 85% 50%))" },
-                { bg: "linear-gradient(135deg, hsl(240 85% 60%), hsl(260 85% 60%))" },
-                { bg: "linear-gradient(135deg, hsl(320 85% 60%), hsl(340 85% 60%))" },
+                { bg: "linear-gradient(135deg, hsl(190 90% 55%), hsl(215 90% 55%))" },
+                { bg: "linear-gradient(135deg, hsl(265 90% 60%), hsl(285 90% 60%))" },
+                { bg: "linear-gradient(135deg, hsl(320 90% 60%), hsl(335 90% 60%))" },
               ].map((item, i) => (
                 <motion.div
                   key={i}

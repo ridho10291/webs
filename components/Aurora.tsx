@@ -32,6 +32,8 @@ export function Aurora() {
       return;
     }
 
+    const BRAND_HUES = [190, 205, 250, 275, 315, 330];
+
     const initOrbs = (): Orb[] => {
       const count = 6;
       const arr: Orb[] = [];
@@ -41,9 +43,9 @@ export function Aurora() {
           y: Math.random(),
           vx: (Math.random() - 0.5) * 0.0008,
           vy: (Math.random() - 0.5) * 0.0008,
-          size: 180 + Math.random() * 220,
-          hue: 150 + Math.random() * 80,
-          opacity: 0.12 + Math.random() * 0.1,
+          size: 160 + Math.random() * 240,
+          hue: BRAND_HUES[Math.floor(Math.random() * BRAND_HUES.length)] + (Math.random() - 0.5) * 15,
+          opacity: 0.16 + Math.random() * 0.12,
         });
       }
       return arr;
@@ -131,13 +133,16 @@ export function Aurora() {
   if (!enabled) {
     return (
       <div className="fixed inset-0 -z-20 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute inset-0 bg-cosmic" />
+        <div className="absolute inset-0 bg-dots" />
         <div className="absolute inset-0" style={{
           backgroundImage: `
-            radial-gradient(ellipse 80% 50% at 20% 20%, hsl(160 85% 50% / 0.08), transparent),
-            radial-gradient(ellipse 60% 40% at 80% 80%, hsl(240 85% 60% / 0.06), transparent),
-            radial-gradient(ellipse 40% 60% at 50% 50%, hsl(320 85% 60% / 0.04), transparent)
+            radial-gradient(ellipse 80% 50% at 20% 20%, hsl(190 90% 55% / 0.09), transparent),
+            radial-gradient(ellipse 60% 40% at 80% 80%, hsl(265 90% 60% / 0.08), transparent),
+            radial-gradient(ellipse 40% 60% at 50% 50%, hsl(320 90% 60% / 0.05), transparent)
           `
         }} />
+        <div className="absolute inset-0 bg-vignette" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22 opacity=%220.02%22/%3E%3C/svg%3E')]" />
       </div>
     );
@@ -147,17 +152,21 @@ export function Aurora() {
     <div className="fixed inset-0 -z-20 overflow-hidden pointer-events-none" aria-hidden="true">
       <canvas ref={canvasRef} className="w-full h-full" />
       
+      <div className="absolute inset-0 bg-cosmic" />
+      <div className="absolute inset-0 bg-dots" />
+      
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--bg)_0%,_transparent_70%)]" />
       
       <div className="absolute inset-0" style={{
         backgroundImage: `
-          radial-gradient(ellipse 80% 50% at 20% 20%, hsl(160 85% 50% / 0.08), transparent),
-          radial-gradient(ellipse 60% 40% at 80% 80%, hsl(240 85% 60% / 0.06), transparent),
-          radial-gradient(ellipse 40% 60% at 50% 50%, hsl(320 85% 60% / 0.04), transparent)
+          radial-gradient(ellipse 80% 50% at 20% 20%, hsl(190 90% 55% / 0.08), transparent),
+          radial-gradient(ellipse 60% 40% at 80% 80%, hsl(265 90% 60% / 0.07), transparent),
+          radial-gradient(ellipse 40% 60% at 50% 50%, hsl(320 90% 60% / 0.05), transparent)
         `
       }} />
       
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22 opacity=%220.02%22/%3E%3C/svg%3E')]" />
+      <div className="absolute inset-0 bg-vignette" />
     </div>
   );
 }
