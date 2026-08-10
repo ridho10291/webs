@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowDown, Bot, Github, Instagram, Rocket, Send, Sparkles } from "lucide-react";
@@ -40,6 +41,54 @@ function splitText(text: string) {
       {char === " " ? "\u00A0" : char}
     </motion.span>
   ));
+}
+
+const ROLES = [
+  "Full Stack Developer & Bot Creator",
+  "Bot WhatsApp • Telegram • Discord",
+  "Automation & AI Enthusiast",
+  "Build • Deploy • Scale",
+];
+
+function Typewriter() {
+  const [text, setText] = useState("");
+  const [index, setIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = ROLES[index % ROLES.length];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!deleting && text === current) {
+      timeout = setTimeout(() => setDeleting(true), 2200);
+    } else if (deleting && text === "") {
+      setDeleting(false);
+      setIndex((i) => (i + 1) % ROLES.length);
+    } else {
+      timeout = setTimeout(
+        () => {
+          setText(
+            deleting
+              ? current.slice(0, text.length - 1)
+              : current.slice(0, text.length + 1)
+          );
+        },
+        deleting ? 35 : 65 + Math.random() * 40
+      );
+    }
+
+    return () => clearTimeout(timeout);
+  }, [text, deleting, index]);
+
+  return (
+    <span className="inline-flex items-baseline gap-1" aria-label={ROLES[0]}>
+      <span className="text-gradient">{text}</span>
+      <span
+        className="caret-glow inline-block w-[3px] h-[1em] translate-y-[0.15em] bg-gradient-to-b from-primary via-accent to-secondary"
+        aria-hidden="true"
+      />
+    </span>
+  );
 }
 
 export function Hero() {
@@ -112,11 +161,11 @@ export function Hero() {
             </motion.h1>
 
             <motion.p
-              className="mt-6 text-lg sm:text-xl lg:text-2xl font-medium text-text-muted max-w-2xl mx-auto"
+              className="mt-6 text-lg sm:text-xl lg:text-2xl font-bold max-w-2xl mx-auto h-[1.5em] min-h-[1.5em]"
               variants={variants.item}
               style={{ transitionDelay: "500ms" }}
             >
-              {siteConfig.role}
+              <Typewriter />
             </motion.p>
 
             <motion.p

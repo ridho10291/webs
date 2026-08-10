@@ -95,6 +95,11 @@
     from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
     to { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
   }
+
+  @keyframes caret-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
 }
 
 :root {
@@ -204,6 +209,12 @@ body {
 
 .text-glow {
   text-shadow: 0 0 30px var(--primary-glow), 0 0 60px var(--accent-glow);
+}
+
+.caret-glow {
+  animation: caret-blink 1s steps(2, start) infinite;
+  box-shadow: 0 0 12px var(--primary-glow), 0 0 24px var(--accent-glow);
+  border-radius: 2px;
 }
 
 .gradient-border {
