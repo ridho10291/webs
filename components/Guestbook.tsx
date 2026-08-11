@@ -90,7 +90,7 @@ export function Guestbook() {
 
         <motion.form
           onSubmit={onSubmit}
-          className="mt-12 rounded-2xl border border-border/50 bg-bg-elevated/50 p-6 backdrop-blur-xl transition-all hover:border-primary/50"
+          className="surface mt-12 rounded-2xl p-5 transition-all hover:border-primary/50 sm:p-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -122,7 +122,7 @@ export function Guestbook() {
             <motion.button
               type="submit"
               disabled={status === "loading"}
-              className="btn-primary shrink-0 whitespace-nowrap"
+              className="btn-primary shrink-0 gap-2 whitespace-nowrap"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >

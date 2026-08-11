@@ -3,356 +3,231 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowDown, Bot, Github, Instagram, Rocket, Send, Sparkles } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Bot,
+  Check,
+  Code2,
+  Github,
+  Instagram,
+  Send,
+  Sparkles,
+} from "lucide-react";
 import { siteConfig } from "@/data/site";
 import { VisitorCounter } from "./VisitorCounter";
 
-const variants = {
-  container: {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.15 },
-    },
-  },
-  item: {
-    hidden: { opacity: 0, y: 25 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } },
-  },
-};
-
-const floatingVariants = {
-  animate: {
-    y: [0, -20, 0],
-    rotate: [0, 2, 0, -2, 0],
-    transition: { duration: 8, repeat: Infinity, ease: "easeInOut" },
-  },
-};
-
-function splitText(text: string) {
-  return text.split("").map((char, i) => (
-    <motion.span
-      key={i}
-      className="inline-block"
-      initial={{ opacity: 0, y: 30, rotateX: -90 }}
-      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ duration: 0.4, delay: 0.15 + i * 0.025, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {char === " " ? "\u00A0" : char}
-    </motion.span>
-  ));
-}
-
-const ROLES = [
-  "Full Stack Developer & Bot Creator",
-  "Bot WhatsApp • Telegram • Discord",
-  "Automation & AI Enthusiast",
-  "Build • Deploy • Scale",
+const roles = [
+  "Full-stack developer",
+  "Bot & automation builder",
+  "Digital problem solver",
 ];
+
+const reveal = {
+  hidden: { opacity: 0, y: 22 },
+  show: { opacity: 1, y: 0 },
+};
 
 function Typewriter() {
   const [text, setText] = useState("");
-  const [index, setIndex] = useState(0);
+  const [roleIndex, setRoleIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    const current = ROLES[index % ROLES.length];
-    let timeout: ReturnType<typeof setTimeout>;
+    const role = roles[roleIndex];
+    const complete = text === role;
+    const empty = text.length === 0;
+    const delay = complete ? 1800 : deleting ? 36 : 58;
 
-    if (!deleting && text === current) {
-      timeout = setTimeout(() => setDeleting(true), 2200);
-    } else if (deleting && text === "") {
-      setDeleting(false);
-      setIndex((i) => (i + 1) % ROLES.length);
-    } else {
-      timeout = setTimeout(
-        () => {
-          setText(
-            deleting
-              ? current.slice(0, text.length - 1)
-              : current.slice(0, text.length + 1)
-          );
-        },
-        deleting ? 35 : 65 + Math.random() * 40
-      );
-    }
+    const timeout = window.setTimeout(() => {
+      if (complete) {
+        setDeleting(true);
+      } else if (deleting && empty) {
+        setDeleting(false);
+        setRoleIndex((index) => (index + 1) % roles.length);
+      } else {
+        setText((current) =>
+          deleting ? role.slice(0, current.length - 1) : role.slice(0, current.length + 1)
+        );
+      }
+    }, delay);
 
-    return () => clearTimeout(timeout);
-  }, [text, deleting, index]);
+    return () => window.clearTimeout(timeout);
+  }, [deleting, roleIndex, text]);
 
   return (
-    <span className="inline-flex items-baseline gap-1" aria-label={ROLES[0]}>
-      <span className="text-gradient">{text}</span>
-      <span
-        className="caret-glow inline-block w-[3px] h-[1em] translate-y-[0.15em] bg-gradient-to-b from-primary via-accent to-secondary"
-        aria-hidden="true"
-      />
+    <span className="inline-flex items-baseline gap-1 text-primary">
+      {text}
+      <span className="caret-glow inline-block h-[1em] w-0.5 translate-y-0.5 bg-primary" aria-hidden="true" />
     </span>
   );
 }
 
+const socials = [
+  { label: "GitHub", href: siteConfig.socials.github, icon: Github },
+  { label: "Instagram", href: siteConfig.socials.instagram, icon: Instagram },
+  { label: "Telegram", href: siteConfig.socials.telegram, icon: Send },
+];
+
 export function Hero() {
   return (
-    <section id="beranda" className="relative min-h-screen flex flex-col justify-center px-4 pt-24 pb-16 sm:px-6">
+    <section
+      id="beranda"
+      className="relative isolate flex min-h-[780px] items-center overflow-hidden px-4 pb-16 pt-28 sm:min-h-[820px] sm:px-6 lg:pt-32"
+    >
+      <div className="soft-grid absolute inset-x-0 top-0 -z-10 h-[720px] opacity-60" aria-hidden="true" />
+      <div className="absolute left-[7%] top-[14%] -z-10 h-52 w-52 rounded-full bg-primary/15 blur-[100px]" aria-hidden="true" />
+      <div className="absolute right-[10%] top-[20%] -z-10 h-72 w-72 rounded-full bg-accent/20 blur-[120px]" aria-hidden="true" />
+
       <motion.div
-        className="relative z-10"
-        variants={variants.container}
+        className="mx-auto grid w-full max-w-6xl items-center gap-14 lg:grid-cols-[1.04fr_0.96fr] lg:gap-12"
         initial="hidden"
         animate="show"
+        variants={{ show: { transition: { staggerChildren: 0.11, delayChildren: 0.08 } } }}
       >
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center">
-            <motion.div
-              className="mb-8 inline-flex items-center gap-3 rounded-full border border-primary/30 bg-primary/10 px-5 py-2"
-              variants={variants.item}
-              style={{ transitionDelay: "0ms" }}
-            >
-              <motion.span
-                className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent"
-                animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0, -5, 0] }}
-                transition={{ duration: 4, repeat: Infinity }}
-              >
-                <Bot size={16} className="text-bg" />
-              </motion.span>
-              <span className="text-sm font-medium text-gradient">
-                Fullstack Developer & Bot Architect
-              </span>
-              <span className="w-px h-6 bg-gradient-to-t from-primary to-transparent" />
-              <span className="text-xs font-mono text-text-muted px-2">
-                v2026.08
-              </span>
-            </motion.div>
+        <div className="max-w-2xl">
+          <motion.div
+            variants={reveal}
+            transition={{ duration: 0.55 }}
+            className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-2 text-xs font-semibold tracking-wide text-primary"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+            </span>
+            Available for selected projects
+          </motion.div>
 
-            <motion.h1
-              className="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-[1.05]"
-              variants={variants.item}
-              style={{ transitionDelay: "100ms" }}
-            >
-              <span className="block text-text" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.02em" }}>
-                {splitText("Halo, saya ")}
-              </span>
-              <span className="block gradient-text" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.02em" }}>
-                {siteConfig.name.split("").map((char, i) => (
-                  <motion.span
-                    key={i}
-                    className="inline-block"
-                    initial={{ opacity: 0, y: 40, scale: 0.8 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3 + i * 0.04, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-              </span>
-              <motion.span
-                className="block text-text inline-flex items-center gap-1"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.8, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-              >
-                <motion.span
-                  className="inline-block"
-                  animate={{ rotate: [0, 15, -10, 15, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 2 }}
-                >
-                  👋
-                </motion.span>
-              </motion.span>
-            </motion.h1>
+          <motion.p
+            variants={reveal}
+            transition={{ duration: 0.55 }}
+            className="mt-7 font-mono text-sm font-medium uppercase tracking-[0.18em] text-text-muted"
+          >
+            Hi, I&apos;m {siteConfig.name}
+          </motion.p>
 
-            <motion.p
-              className="mt-6 text-lg sm:text-xl lg:text-2xl font-bold max-w-2xl mx-auto h-[1.5em] min-h-[1.5em]"
-              variants={variants.item}
-              style={{ transitionDelay: "500ms" }}
-            >
-              <Typewriter />
-            </motion.p>
-
-            <motion.p
-              className="mt-5 text-base sm:text-lg text-text-muted max-w-xl mx-auto leading-relaxed"
-              variants={variants.item}
-              style={{ transitionDelay: "600ms" }}
-            >
-              {siteConfig.tagline}
-              <br />
-              <span className="text-gradient font-medium">
-                Bot WhatsApp • Telegram • Discord
-              </span>{" "}
-              sampai full-stack website &mdash; semuanya dari nol sampai production.
-            </motion.p>
-
-            <motion.div
-              className="mt-12 flex flex-wrap items-center justify-center gap-4"
-              variants={variants.item}
-              style={{ transitionDelay: "700ms" }}
-            >
-              <Link
-                href="#proyek"
-                className="group btn-primary inline-flex items-center gap-2"
-              >
-                <Sparkles size={18} aria-hidden="true" />
-                Lihat Project
-                <ArrowDown size={18} className="group-hover:translate-y-1 transition-transform" />
-              </Link>
-              <Link
-                href="#kontak"
-                className="btn-secondary inline-flex items-center gap-2"
-              >
-                <Send size={18} />
-                Mulai Project
-              </Link>
-            </motion.div>
-
-            <motion.div
-              className="mt-10 flex items-center justify-center gap-3"
-              variants={variants.item}
-              style={{ transitionDelay: "800ms" }}
-            >
-              <a
-                href={siteConfig.socials.github}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub"
-                className="social-link group"
-              >
-                <Github size={22} />
-              </a>
-              <a
-                href={siteConfig.socials.instagram}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-                className="social-link group"
-              >
-                <Instagram size={22} />
-              </a>
-              <a
-                href={siteConfig.socials.telegram}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Telegram"
-                className="social-link group"
-              >
-                <Send size={22} />
-              </a>
-            </motion.div>
-
-            <motion.div
-              className="mt-10 flex justify-center"
-              variants={variants.item}
-              style={{ transitionDelay: "900ms" }}
-            >
-              <VisitorCounter />
-            </motion.div>
-
-            <motion.div
-              className="mt-14 flex justify-center"
-              variants={variants.item}
-              style={{ transitionDelay: "1000ms" }}
-            >
-              <a
-                href="#tentang"
-                aria-label="Scroll ke bawah"
-                className="scroll-indicator group"
-              >
-                <ArrowDown size={24} className="animate-bounce group-hover:scale-110 transition-transform" />
-              </a>
-            </motion.div>
-          </div>
+          <motion.h1
+            variants={reveal}
+            transition={{ duration: 0.65 }}
+            className="mt-3 text-[clamp(3.15rem,7vw,5.9rem)] font-bold leading-[0.93] tracking-[-0.065em] text-text"
+          >
+            From a raw idea
+            <span className="block text-gradient">to a system that runs.</span>
+          </motion.h1>
 
           <motion.div
-            className="mt-20 relative"
-            variants={variants.item}
-            style={{ transitionDelay: "1100ms" }}
+            variants={reveal}
+            transition={{ duration: 0.55 }}
+            className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-base font-medium text-text-muted sm:text-lg"
           >
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <motion.div
-                className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 to-accent/10"
-                animate={floatingVariants}
-              >
-                <Rocket size={32} className="text-primary" />
-              </motion.div>
+            <span>I&apos;m a</span>
+            <Typewriter />
+          </motion.div>
 
-              {[
-                { bg: "linear-gradient(135deg, hsl(190 90% 55%), hsl(215 90% 55%))" },
-                { bg: "linear-gradient(135deg, hsl(265 90% 60%), hsl(285 90% 60%))" },
-                { bg: "linear-gradient(135deg, hsl(320 90% 60%), hsl(335 90% 60%))" },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute rounded-full blur-3xl opacity-20"
-                  style={{
-                    width: 200 + i * 50,
-                    height: 200 + i * 50,
-                    background: item.bg,
-                    top: `calc(50% + ${-100 + i * 30}px)`,
-                    left: `calc(50% + ${-100 + i * 30}px)`,
-                  }}
-                  animate={{
-                    scale: [1, 1.15, 1],
-                    opacity: [0.15, 0.25, 0.15],
-                  }}
-                  transition={{
-                    duration: 6 + i,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: i * 0.5,
-                  }}
-                />
+          <motion.p
+            variants={reveal}
+            transition={{ duration: 0.55 }}
+            className="mt-5 max-w-xl text-base leading-8 text-text-muted sm:text-lg"
+          >
+            Saya membangun bot, website, dan otomasi yang tidak sekadar terlihat bagus—tetapi benar-benar
+            mempersingkat kerja dan siap dipakai setiap hari.
+          </motion.p>
+
+          <motion.div
+            variants={reveal}
+            transition={{ duration: 0.55 }}
+            className="mt-9 flex flex-wrap gap-3"
+          >
+            <Link href="#kontak" className="btn-primary gap-2">
+              Mulai project
+              <ArrowUpRight size={18} />
+            </Link>
+            <Link href="#proyek" className="btn-secondary inline-flex items-center gap-2">
+              Lihat karya pilihan
+              <ArrowDownRight size={18} />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            variants={reveal}
+            transition={{ duration: 0.55 }}
+            className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4"
+          >
+            <VisitorCounter />
+            <div className="flex items-center gap-2">
+              {socials.map(({ label, href, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/80 bg-bg-elevated/60 text-text-muted transition hover:-translate-y-1 hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
+                >
+                  <Icon size={18} />
+                </a>
               ))}
             </div>
-
-            <motion.div
-              className="relative mx-auto max-w-2xl rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5 p-4 backdrop-blur-xl"
-            >
-              <div className="flex items-center gap-3 rounded-xl bg-bg-elevated/50 p-3">
-                <div className="flex gap-1.5">
-                  <span className="w-3 h-3 rounded-full bg-primary" />
-                  <span className="w-3 h-3 rounded-full bg-accent" />
-                  <span className="w-3 h-3 rounded-full bg-secondary" />
-                </div>
-                <span className="text-xs font-mono text-text-muted ml-2">terminal</span>
-              </div>
-              <pre className="mt-4 overflow-x-auto rounded-xl bg-bg-elevated p-5 text-sm font-mono text-text leading-relaxed">
-                <code>{`$ npx create-bot --name "WhatsApp Auto-Reply"
-$ deploy --platform vercel --free
-✓ Bot live 24/7 at zero cost
-✓ Database: Neon Postgres
-✓ Notifications: Telegram Bot API
-                `}</code>
-              </pre>
-            </motion.div>
           </motion.div>
         </div>
+
+        <motion.div variants={reveal} transition={{ duration: 0.7, delay: 0.05 }} className="relative mx-auto w-full max-w-[520px]">
+          <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-br from-primary/20 via-accent/15 to-secondary/20 blur-3xl" aria-hidden="true" />
+          <div className="surface overflow-hidden rounded-[1.7rem] p-3 shadow-2xl shadow-black/30">
+            <div className="flex items-center justify-between rounded-[1.1rem] border border-border/70 bg-bg/80 px-4 py-3">
+              <div className="flex items-center gap-2" aria-hidden="true">
+                <span className="h-2.5 w-2.5 rounded-full bg-secondary" />
+                <span className="h-2.5 w-2.5 rounded-full bg-accent" />
+                <span className="h-2.5 w-2.5 rounded-full bg-primary" />
+              </div>
+              <span className="font-mono text-[11px] text-text-muted">ridho.dev / workspace</span>
+              <div className="h-5 w-10 rounded-full bg-primary/10" aria-hidden="true" />
+            </div>
+
+            <div className="relative mt-3 overflow-hidden rounded-[1.1rem] border border-border/60 bg-[linear-gradient(145deg,rgba(94,234,212,0.12),transparent_36%),linear-gradient(180deg,var(--bg-elevated),var(--bg))] p-5 sm:p-7">
+              <div className="absolute right-0 top-0 h-44 w-44 rounded-full bg-accent/25 blur-3xl" aria-hidden="true" />
+              <div className="relative flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20">
+                    <Bot size={24} className="text-bg" />
+                  </div>
+                  <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-primary">Current craft</p>
+                  <h2 className="mt-2 max-w-sm text-3xl font-bold leading-tight tracking-tight text-text sm:text-4xl">Digital systems that feel effortless.</h2>
+                </div>
+                <div className="hidden rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary sm:block">Live</div>
+              </div>
+
+              <div className="relative mt-8 grid grid-cols-3 gap-3">
+                {[
+                  ["01", "Discover", Sparkles],
+                  ["02", "Build", Code2],
+                  ["03", "Launch", Check],
+                ].map(([number, label, Icon]) => {
+                  const StepIcon = Icon as typeof Sparkles;
+                  return (
+                    <div key={String(number)} className="rounded-2xl border border-border/70 bg-bg/55 p-3.5 sm:p-4">
+                      <StepIcon size={16} className="text-primary" />
+                      <p className="mt-5 font-mono text-[11px] text-text-muted">{String(number)}</p>
+                      <p className="mt-1 text-sm font-semibold text-text">{String(label)}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="relative mt-3 flex items-center justify-between rounded-2xl border border-primary/20 bg-primary/10 p-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary"><Check size={17} /></span>
+                  <div>
+                    <p className="text-sm font-semibold text-text">Ready to ship</p>
+                    <p className="mt-0.5 text-xs text-text-muted">Clean UX · Scalable build · Human support</p>
+                  </div>
+                </div>
+                <span className="hidden h-2 w-2 rounded-full bg-primary shadow-[0_0_12px_var(--primary)] sm:block" aria-hidden="true" />
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </motion.div>
-
-      <style jsx>{`
-        .social-link {
-          @apply flex h-12 w-12 items-center justify-center rounded-xl border border-border/50 bg-bg-elevated/50 backdrop-blur transition-all duration-300;
-        }
-        .social-link:hover {
-          @apply border-primary/50 bg-primary/10 transform -translate-y-1;
-          box-shadow: 0 10px 30px var(--primary-glow);
-        }
-        .social-link:active {
-          @apply scale-95;
-        }
-        .social-link:nth-child(1):hover { @apply border-primary/50; }
-        .social-link:nth-child(2):hover { @apply border-secondary/50; }
-        .social-link:nth-child(3):hover { @apply border-accent/50; }
-
-        .scroll-indicator {
-          @apply flex h-14 w-14 items-center justify-center rounded-2xl border border-border/50 bg-bg-elevated/50 backdrop-blur text-text-muted transition-all duration-300;
-        }
-        .scroll-indicator:hover {
-          @apply border-primary/50 bg-primary/10 text-primary;
-          transform: translateY(4px);
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .scroll-indicator .animate-bounce { animation: none; }
-        }
-      `}</style>
     </section>
   );
 }

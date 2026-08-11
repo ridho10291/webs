@@ -50,7 +50,7 @@ export function ContactSection() {
   }
 
   const inputClass =
-    "w-full rounded-xl border border-border/50 bg-bg/50 px-4 py-3 text-base text-text placeholder-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all";
+    "w-full rounded-xl border border-border/60 bg-bg/55 px-4 py-3 text-base text-text placeholder-text-muted shadow-inner shadow-black/10 transition focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10";
 
   return (
     <section id="kontak" className="relative py-24 sm:py-32 px-4">
@@ -77,13 +77,13 @@ export function ContactSection() {
           transition={{ duration: 0.7, delay: 0.1 }}
         >
           <motion.div
-            className="lg:col-span-2 space-y-8"
+          className="space-y-5 lg:col-span-2"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
           >
             <motion.div
-              className="rounded-2xl border border-border/50 bg-bg-elevated/50 p-8 backdrop-blur-xl"
+              className="surface rounded-2xl p-6 sm:p-8"
               whileHover={{ y: -4 }}
             >
               <h3 className="text-xl font-bold text-text mb-6">Info Kontak</h3>
@@ -131,7 +131,7 @@ export function ContactSection() {
             </motion.div>
 
             <motion.div
-              className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-accent/10 p-8"
+              className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-accent/10 p-6 sm:p-8"
               whileHover={{ scale: [1, 1.01, 1] }}
             >
               <div className="flex items-center gap-3 mb-3">
@@ -149,7 +149,7 @@ export function ContactSection() {
 
           <motion.form
             onSubmit={onSubmit}
-            className="lg:col-span-3 rounded-2xl border border-border/50 bg-bg-elevated/50 p-8 backdrop-blur-xl"
+            className="surface space-y-5 rounded-2xl p-6 sm:p-8 lg:col-span-3"
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
@@ -215,7 +215,7 @@ export function ContactSection() {
             <motion.button
               type="submit"
               disabled={status === "loading"}
-              className="mt-8 btn-primary w-full sm:w-auto"
+              className="btn-primary mt-3 w-full gap-2 sm:w-auto"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >

@@ -14,7 +14,7 @@
   --color-accent-glow: var(--accent-glow);
   --color-secondary: var(--secondary);
   --color-secondary-glow: var(--secondary-glow);
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   --animate-aurora: aurora 20s ease-in-out infinite;
@@ -103,12 +103,12 @@
 }
 
 :root {
-  --bg: #07060f;
-  --bg-elevated: #0e0c1d;
-  --border: #241f3d;
-  --text: #f4f2ff;
-  --text-muted: #8f8aae;
-  --primary: #22d3ee;
+  --bg: #080914;
+  --bg-elevated: #111326;
+  --border: #272b47;
+  --text: #f6f7ff;
+  --text-muted: #9fa6c5;
+  --primary: #5eead4;
   --primary-glow: rgba(34, 211, 238, 0.35);
   --accent: #8b5cf6;
   --accent-glow: rgba(139, 92, 246, 0.35);
@@ -150,6 +150,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+section[id] {
+  scroll-margin-top: 6rem;
+}
+
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 4px;
 }
 
 ::selection {
@@ -284,27 +293,18 @@ body {
 /* ===== Buttons ===== */
 .btn-primary {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(120deg, var(--primary), var(--accent) 60%, var(--secondary));
   background-size: 200% 200%;
-  color: #0a0813;
-  font-weight: 600;
-  padding: 0.875rem 2rem;
-  border-radius: 0.75rem;
-  overflow: hidden;
+  color: #090b16;
+  font-weight: 700;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.875rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 24px var(--accent-glow), 0 0 40px var(--primary-glow);
+  box-shadow: 0 10px 30px var(--accent-glow), 0 0 40px var(--primary-glow);
   animation: gradient-xy 8s ease infinite;
-}
-
-.btn-primary::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--secondary), var(--accent), var(--primary));
-  background-size: 200% 200%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  animation: gradient-xy 6s ease infinite;
 }
 
 .btn-primary:hover {
@@ -312,20 +312,16 @@ body {
   box-shadow: 0 8px 36px var(--accent-glow), 0 0 80px var(--secondary-glow);
 }
 
-.btn-primary:hover::before {
-  opacity: 1;
-}
-
 .btn-primary:active {
   transform: translateY(0);
 }
 
 .btn-secondary {
-  background: var(--bg-elevated);
+  background: color-mix(in srgb, var(--bg-elevated) 78%, transparent);
   color: var(--text);
-  font-weight: 500;
-  padding: 0.875rem 2rem;
-  border-radius: 0.75rem;
+  font-weight: 600;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.875rem;
   border: 1px solid var(--border);
   transition: all 0.3s ease;
 }
@@ -381,6 +377,23 @@ body {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 1.5rem;
+}
+
+.surface {
+  background: color-mix(in srgb, var(--bg-elevated) 74%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.soft-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--border) 38%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--border) 38%, transparent) 1px, transparent 1px);
+  background-size: 42px 42px;
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 90%);
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
 }
 
 @media (min-width: 640px) {
