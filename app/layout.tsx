@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { CursorFollower } from "@/components/CursorFollower";
 import { Aurora } from "@/components/Aurora";
 import { PageLoader } from "@/components/PageLoader";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { siteConfig } from "@/data/site";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <CursorFollower />
           <Aurora />
           <PageLoader />
+          <ScrollToTop />
           <Navbar />
           <main className="relative z-10">{children}</main>
         </ThemeProvider>

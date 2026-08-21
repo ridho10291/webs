@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Bot, Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
@@ -9,6 +9,7 @@ import { siteConfig } from "@/data/site";
 
 const links = [
   { href: "#tentang", label: "Tentang" },
+  { href: "#pengalaman", label: "Pengalaman" },
   { href: "#proyek", label: "Karya" },
   { href: "#buku-tamu", label: "Feedback" },
 ];
@@ -17,6 +18,8 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("#beranda");
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 });
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 14);
@@ -26,7 +29,7 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    const sections = ["beranda", "tentang", "proyek", "buku-tamu", "kontak"]
+    const sections = ["beranda", "tentang", "pengalaman", "proyek", "buku-tamu", "kontak"]
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
 
@@ -46,9 +49,13 @@ export function Navbar() {
     `relative rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
       active === href ? "text-text" : "text-text-muted hover:text-text"
     }`;
-
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5">
+      <motion.div
+        className="pointer-events-none absolute inset-x-0 top-0 h-0.5 origin-left bg-gradient-to-r from-primary via-accent to-secondary"
+        style={{ scaleX: progress }}
+        aria-hidden="true"
+      />
       <nav
         className={`pointer-events-auto mx-auto flex h-16 max-w-6xl items-center justify-between rounded-2xl border px-3 transition-all duration-300 sm:px-4 ${
           scrolled
@@ -71,7 +78,12 @@ export function Navbar() {
 
         <div className="hidden items-center gap-1 md:flex">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} className={linkClass(link.href)}>
+            <Link
+              key={link.href}
+              href={link.href}
+              className={linkClass(link.href)}
+              aria-current={active === link.href ? "true" : undefined}
+            >
               {link.label}
               {active === link.href && (
                 <motion.span
@@ -84,7 +96,10 @@ export function Navbar() {
           ))}
           <div className="mx-2 h-5 w-px bg-border/70" aria-hidden="true" />
           <ThemeToggle />
-          <Link href="#kontak" className="ml-2 inline-flex items-center gap-1.5 rounded-xl bg-text px-3.5 py-2 text-sm font-bold text-bg transition hover:-translate-y-0.5 hover:bg-primary">
+          <Link
+            href="#kontak"
+            className="ml-2 inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-accent px-3.5 py-2 text-sm font-bold text-bg shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:shadow-primary/40"
+          >
             Hubungi saya
             <ArrowUpRight size={15} />
           </Link>

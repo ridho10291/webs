@@ -1,5 +1,6 @@
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
+import { Experience } from "@/components/Experience";
 import { Projects } from "@/components/Projects";
 import { Guestbook } from "@/components/Guestbook";
 import { ContactSection } from "@/components/ContactSection";
@@ -10,6 +11,7 @@ export default function Home() {
     <main className="relative min-h-screen overflow-x-clip">
       <Hero />
       <About />
+      <Experience />
       <Projects />
       <Guestbook />
       <ContactSection />

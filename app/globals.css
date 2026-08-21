@@ -14,6 +14,7 @@
   --color-accent-glow: var(--accent-glow);
   --color-secondary: var(--secondary);
   --color-secondary-glow: var(--secondary-glow);
+  --color-error: var(--error);
   --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
@@ -114,6 +115,7 @@
   --accent-glow: rgba(139, 92, 246, 0.35);
   --secondary: #e879f9;
   --secondary-glow: rgba(232, 121, 249, 0.35);
+  --error: #fb7185;
 }
 
 .light {
@@ -128,6 +130,7 @@
   --accent-glow: rgba(124, 58, 237, 0.25);
   --secondary: #c026d3;
   --secondary-glow: rgba(192, 38, 211, 0.25);
+  --error: #e11d48;
 }
 
 * {
@@ -136,11 +139,22 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
   cursor: none;
 }
 
 @media (pointer: coarse) {
   html { cursor: auto; }
+}
+
+@media (pointer: fine) {
+  input, textarea, select, [contenteditable="true"] { cursor: text; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 body {
@@ -373,6 +387,19 @@ section[id] {
   color: var(--text-muted);
 }
 
+/* ===== Timeline connector (Experience section) ===== */
+@media (min-width: 640px) {
+  .timeline-connector {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--primary), var(--accent), transparent);
+    opacity: 0.3;
+  }
+}
+
 .section-container {
   max-width: 1280px;
   margin: 0 auto;
@@ -442,4 +469,69 @@ section[id] {
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, var(--accent), var(--secondary));
+}
+
+/* ====== Premium Animation Utilities ====== */
+.shimmer-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 55%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.shimmer-sweep:hover::after {
+  opacity: 1;
+  animation: shimmer-sweep 1.5s ease-in-out;
+}
+
+.glow-pulse {
+  animation: glow-ring 3s ease-in-out infinite;
+}
+
+.card-3d {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.card-3d:hover {
+  transform: translateY(-8px) rotateX(2deg) rotateY(-1deg);
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--text) 0%,
+    var(--primary) 25%,
+    var(--accent) 50%,
+    var(--primary) 75%,
+    var(--text) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-x 4s linear infinite;
+}
+
+@layer utilities {
+  .perspective-1000 { perspective: 1000px; }
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; }
 }

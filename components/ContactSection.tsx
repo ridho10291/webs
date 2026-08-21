@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
-import { Loader2, Mail, MapPin, Send, Sparkles } from "lucide-react";
+import { Loader2, Mail, MapPin, Send, Sparkles, TriangleAlert } from "lucide-react";
 import { siteConfig } from "@/data/site";
 import { SectionHeading } from "./SectionHeading";
 
@@ -54,6 +54,19 @@ export function ContactSection() {
 
   return (
     <section id="kontak" className="relative py-24 sm:py-32 px-4">
+      <motion.div
+        className="absolute left-[5%] top-[15%] h-52 w-52 rounded-full bg-primary/10 blur-[110px]"
+        animate={{ scale: [1, 1.15, 0.9, 1], opacity: [0.2, 0.35, 0.15, 0.2] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        aria-hidden="true"
+      />
+      <motion.div
+        className="absolute right-[8%] bottom-[10%] h-44 w-44 rounded-full bg-secondary/10 blur-[95px]"
+        animate={{ scale: [1, 0.9, 1.15, 1], opacity: [0.15, 0.3, 0.1, 0.15] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        aria-hidden="true"
+      />
+
       <div className="mx-auto max-w-6xl">
         <motion.div
           className="text-center"
@@ -79,12 +92,17 @@ export function ContactSection() {
           <motion.div
           className="space-y-5 lg:col-span-2"
             initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
             <motion.div
-              className="surface rounded-2xl p-6 sm:p-8"
+              className="surface shimmer-sweep rounded-2xl p-6 sm:p-8"
               whileHover={{ y: -4 }}
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
             >
               <h3 className="text-xl font-bold text-text mb-6">Info Kontak</h3>
               <ul className="space-y-5">
@@ -131,8 +149,12 @@ export function ContactSection() {
             </motion.div>
 
             <motion.div
-              className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-accent/10 p-6 sm:p-8"
+              className="shimmer-sweep rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-accent/10 p-6 sm:p-8"
               whileHover={{ scale: [1, 1.01, 1] }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15, duration: 0.6 }}
             >
               <div className="flex items-center gap-3 mb-3">
                 <Sparkles size={24} className="text-primary" />
@@ -149,34 +171,59 @@ export function ContactSection() {
 
           <motion.form
             onSubmit={onSubmit}
-            className="surface space-y-5 rounded-2xl p-6 sm:p-8 lg:col-span-3"
+            className="surface shimmer-sweep space-y-5 rounded-2xl p-6 sm:p-8 lg:col-span-3"
             initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.15 }}
           >
             <div className="grid gap-5 sm:grid-cols-2">
-              <motion.div whileHover={{ scale: 1.01 }}>
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
                 <label htmlFor="name" className="mb-2 block text-sm font-medium text-text-muted">
                   Nama
                 </label>
-                <input id="name" name="name" required maxLength={40} placeholder="Nama kamu" className={inputClass} />
+                <input id="name" name="name" required maxLength={40} autoComplete="name" placeholder="Nama kamu" className={inputClass} />
               </motion.div>
-              <motion.div whileHover={{ scale: 1.01 }}>
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+              >
                 <label htmlFor="email" className="mb-2 block text-sm font-medium text-text-muted">
                   Email
                 </label>
-                <input id="email" name="email" type="email" required maxLength={80} placeholder="email@kamu.com" className={inputClass} />
+                <input id="email" name="email" type="email" required maxLength={80} autoComplete="email" placeholder="email@kamu.com" className={inputClass} />
               </motion.div>
             </div>
 
-            <motion.div whileHover={{ scale: 1.01 }}>
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.35, duration: 0.5 }}
+            >
               <label htmlFor="subject" className="mb-2 block text-sm font-medium text-text-muted">
                 Subjek
               </label>
               <input id="subject" name="subject" maxLength={100} placeholder="contoh: Mau bikin bot WhatsApp order makanan" className={inputClass} />
             </motion.div>
 
-            <motion.div whileHover={{ scale: 1.01 }}>
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
               <label htmlFor="message" className="mb-2 block text-sm font-medium text-text-muted">
                 Pesan
               </label>
@@ -193,16 +240,18 @@ export function ContactSection() {
 
             {status === "error" && (
               <motion.p
-                className="flex items-center gap-2 rounded-xl bg-secondary/10 border border-secondary/20 p-4 text-sm font-medium text-secondary"
+                role="alert"
+                className="flex items-center gap-2 rounded-xl bg-error/10 border border-error/25 p-4 text-sm font-medium text-error"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <Loader2 size={18} className="animate-spin" />
+                <TriangleAlert size={18} className="shrink-0" />
                 {error}
               </motion.p>
             )}
             {status === "success" && (
               <motion.p
+                role="status"
                 className="flex items-center gap-2 rounded-xl bg-primary/10 border border-primary/20 p-4 text-sm font-medium text-primary"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}

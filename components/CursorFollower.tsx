@@ -15,6 +15,7 @@ export function CursorFollower() {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
   const [clicking, setClicking] = useState(false);
+  const [hovering, setHovering] = useState(false);
   const rafRef = useRef<number | null>(null);
   const targetRef = useRef({ x: 0, y: 0 });
   const currentRef = useRef({ x: 0, y: 0 });
@@ -43,10 +44,16 @@ export function CursorFollower() {
     const handleUp = () => setClicking(false);
     const handleLeave = () => setVisible(false);
 
+    const INTERACTIVE = "a, button, [role='button'], input, textarea, select, label, summary";
+    const handleOver = (e: MouseEvent) => {
+      setHovering(Boolean((e.target as HTMLElement).closest?.(INTERACTIVE)));
+    };
+
     window.addEventListener("mousemove", handleMove, { passive: true });
     window.addEventListener("mousedown", handleDown);
     window.addEventListener("mouseup", handleUp);
     window.addEventListener("mouseleave", handleLeave);
+    document.addEventListener("mouseover", handleOver);
 
     const animate = () => {
       currentRef.current.x += (targetRef.current.x - currentRef.current.x) * 0.25;
@@ -70,6 +77,7 @@ export function CursorFollower() {
       window.removeEventListener("mousedown", handleDown);
       window.removeEventListener("mouseup", handleUp);
       window.removeEventListener("mouseleave", handleLeave);
+      document.removeEventListener("mouseover", handleOver);
     };
   }, []);
 
@@ -83,10 +91,12 @@ export function CursorFollower() {
             style={{ left: pos.x, top: pos.y }}
             initial={{ scale: 0 }}
             animate={{
-              scale: clicking ? 0.6 : 1,
+              scale: clicking ? 0.6 : hovering ? 1.9 : 1,
               boxShadow: clicking
                 ? "0 0 25px var(--secondary), 0 0 50px var(--secondary)"
-                : "0 0 15px var(--primary), 0 0 30px var(--primary)",
+                : hovering
+                  ? "0 0 25px var(--accent), 0 0 45px var(--accent)"
+                  : "0 0 15px var(--primary), 0 0 30px var(--primary)",
             }}
             transition={{ duration: 0.08, ease: [0.34, 1.56, 0.64, 1] }}
           />

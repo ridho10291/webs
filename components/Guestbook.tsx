@@ -73,6 +73,13 @@ export function Guestbook() {
 
   return (
     <section id="buku-tamu" className="relative py-24 sm:py-32 px-4">
+      <motion.div
+        className="absolute right-[10%] top-[5%] h-48 w-48 rounded-full bg-accent/10 blur-[100px]"
+        animate={{ scale: [1, 1.2, 0.9, 1], opacity: [0.2, 0.35, 0.15, 0.2] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        aria-hidden="true"
+      />
+
       <div className="mx-auto max-w-4xl">
         <motion.div
           className="text-center"
@@ -90,7 +97,7 @@ export function Guestbook() {
 
         <motion.form
           onSubmit={onSubmit}
-          className="surface mt-12 rounded-2xl p-5 transition-all hover:border-primary/50 sm:p-6"
+          className="surface shimmer-sweep mt-12 rounded-2xl p-5 transition-all hover:border-primary/50 sm:p-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -142,6 +149,7 @@ export function Guestbook() {
 
           {status === "success" && (
             <motion.p
+              role="status"
               className="mt-4 text-center text-sm font-medium text-primary"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -152,7 +160,8 @@ export function Guestbook() {
           )}
           {status === "error" && (
             <motion.p
-              className="mt-4 text-center text-sm font-medium text-secondary"
+              role="alert"
+              className="mt-4 text-center text-sm font-medium text-error"
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
             >
@@ -181,10 +190,11 @@ export function Guestbook() {
           {entries.map((entry, i) => (
             <motion.article
               key={entry.id}
-              className="group relative overflow-hidden rounded-2xl border border-border/50 bg-bg-elevated/50 p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05, duration: 0.4 }}
+              className="group shimmer-sweep card-3d relative overflow-hidden rounded-2xl border border-border/50 bg-bg-elevated/50 p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: i * 0.06, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -3 }}
             >
               <div className="flex items-start gap-4">
                 <motion.div
