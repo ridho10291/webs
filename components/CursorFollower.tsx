@@ -56,17 +56,25 @@ export function CursorFollower() {
     document.addEventListener("mouseover", handleOver);
 
     const animate = () => {
-      currentRef.current.x += (targetRef.current.x - currentRef.current.x) * 0.25;
-      currentRef.current.y += (targetRef.current.y - currentRef.current.y) * 0.25;
+      rafRef.current = requestAnimationFrame(animate);
+      if (document.hidden) return;
+
+      const dx = targetRef.current.x - currentRef.current.x;
+      const dy = targetRef.current.y - currentRef.current.y;
+
+      if (Math.abs(dx) < 0.4 && Math.abs(dy) < 0.4 && trailsRef.current.length === 0) return;
+
+      currentRef.current.x += dx * 0.25;
+      currentRef.current.y += dy * 0.25;
       setPos({ x: currentRef.current.x, y: currentRef.current.y });
 
-      trailsRef.current = trailsRef.current.map(t => ({
-        ...t,
-        life: t.life - 0.06,
-        size: t.size * 0.94,
-      })).filter(t => t.life > 0 && t.size > 0.5);
-
-      rafRef.current = requestAnimationFrame(animate);
+      if (trailsRef.current.length > 0) {
+        trailsRef.current = trailsRef.current.map(t => ({
+          ...t,
+          life: t.life - 0.06,
+          size: t.size * 0.94,
+        })).filter(t => t.life > 0 && t.size > 0.5);
+      }
     };
 
     rafRef.current = requestAnimationFrame(animate);

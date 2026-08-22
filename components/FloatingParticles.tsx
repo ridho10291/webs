@@ -58,7 +58,21 @@ export function FloatingParticles() {
     window.addEventListener("resize", resize);
     resize();
 
+    let inView = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
+
+    let frameCount = 0;
     const animate = () => {
+      rafRef.current = requestAnimationFrame(animate);
+      frameCount++;
+      if (!inView || document.hidden || frameCount % 2 !== 0) return;
+
       const width = canvas.offsetWidth;
       const height = canvas.offsetHeight;
       ctx.clearRect(0, 0, width, height);
@@ -89,8 +103,6 @@ export function FloatingParticles() {
 
         return p.life < p.maxLife && p.y > -20;
       });
-
-      rafRef.current = requestAnimationFrame(animate);
     };
 
     rafRef.current = requestAnimationFrame(animate);
@@ -98,6 +110,7 @@ export function FloatingParticles() {
     return () => {
       cancelAnimationFrame(rafRef.current!);
       window.removeEventListener("resize", resize);
+      observer.disconnect();
     };
   }, []);
 

@@ -74,8 +74,13 @@ export function Aurora() {
     canvas.addEventListener("mousemove", handleMove);
 
     let lastTime = 0;
+    let frameCount = 0;
     const animate = (time: number) => {
-      const dt = Math.min(time - lastTime, 32);
+      rafRef.current = requestAnimationFrame(animate);
+      frameCount++;
+      if (document.hidden || frameCount % 2 !== 0) return;
+
+      const dt = Math.min(time - lastTime, 64);
       lastTime = time;
 
       const width = canvas.width / (window.devicePixelRatio || 1);
@@ -117,8 +122,6 @@ export function Aurora() {
         ctx.fillStyle = gradient;
         ctx.fill();
       });
-
-      rafRef.current = requestAnimationFrame(animate);
     };
 
     rafRef.current = requestAnimationFrame(animate);
