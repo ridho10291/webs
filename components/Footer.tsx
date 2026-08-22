@@ -118,7 +118,7 @@ export function Footer() {
                   className="flex items-center gap-2.5 text-sm text-text-muted transition-colors hover:text-accent"
                 >
                   <Send size={15} className="shrink-0 text-secondary/70" />
-                  @Byzeze43
+                  @{siteConfig.socials.telegram.replace("https://t.me/", "")}
                 </a>
               </li>
             </ul>

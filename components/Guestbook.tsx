@@ -190,7 +190,7 @@ export function Guestbook() {
           {entries.map((entry, i) => (
             <motion.article
               key={entry.id}
-              className="group shimmer-sweep card-3d relative overflow-hidden rounded-2xl border border-border/50 bg-bg-elevated/50 p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
+              className="group shimmer-sweep relative overflow-hidden rounded-2xl border border-border/50 bg-bg-elevated/50 p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
               initial={{ opacity: 0, y: 20, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: i * 0.06, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}

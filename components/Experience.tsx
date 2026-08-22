@@ -83,21 +83,21 @@ export function Experience() {
         </motion.div>
 
         <div className="relative mt-20">
-          <div className="absolute left-8 top-0 h-full w-px bg-gradient-to-b from-primary/30 via-accent/20 to-transparent sm:left-1/2" aria-hidden="true" />
+          <div className="absolute left-[51.5px] top-0 h-full w-px bg-gradient-to-b from-primary/30 via-accent/20 to-transparent sm:left-[calc(50%_-_0.5px)]" aria-hidden="true" />
 
           {experiences.map((exp, i) => {
             const isLeft = i % 2 === 0;
             return (
               <motion.div
                 key={`${exp.year}-${exp.title}`}
-                className={`relative mb-16 last:mb-0 sm:mb-20 ${isLeft ? "sm:pr-[calc(50%+2.5rem)]" : "sm:pl-[calc(50%+2.5rem)]"}`}
+                className={`relative mb-16 last:mb-0 sm:mb-20 ${isLeft ? "sm:pr-[calc(50%_+_2.5rem)]" : "sm:pl-[calc(50%_+_2.5rem)]"}`}
                 initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
                 <motion.div
-                  className="absolute left-8 top-6 z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary/40 bg-bg sm:left-1/2 sm:-translate-x-1/2"
+                  className="absolute left-8 top-6 z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary/40 bg-bg sm:left-[calc(50%_-_20px)]"
                   whileInView={{ scale: [0, 1.2, 1] }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
@@ -105,7 +105,7 @@ export function Experience() {
                   <span className="h-3 w-3 rounded-full bg-gradient-to-br from-primary to-accent" />
                 </motion.div>
 
-                <div className={`ml-20 sm:ml-0 ${isLeft ? "" : ""}`}>
+                <div className="ml-20 sm:ml-0">
                   <span className="font-mono text-xs font-bold tracking-[0.15em] uppercase text-primary">
                     {exp.year}
                   </span>

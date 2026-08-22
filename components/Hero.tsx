@@ -120,12 +120,6 @@ function GlowOrb({ delay, color, size, x, y }: { delay: number; color: string; s
 }
 
 export function Hero() {
-  useEffect(() => {
-    const handleMove = () => {};
-    window.addEventListener("mousemove", handleMove);
-    return () => window.removeEventListener("mousemove", handleMove);
-  }, []);
-
   return (
     <section
       id="beranda"

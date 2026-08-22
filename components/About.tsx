@@ -201,7 +201,7 @@ export function About() {
             {highlights.map((h, i) => (
               <motion.article
                 key={h.title}
-                className="group shimmer-sweep card-3d relative overflow-hidden rounded-2xl border border-border/50 bg-bg-elevated/50 p-6 transition-all duration-500 hover:border-primary/50 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:shadow-primary/10"
+                className="group shimmer-sweep relative overflow-hidden rounded-2xl border border-border/50 bg-bg-elevated/50 p-6 transition-all duration-500 hover:border-primary/50 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:shadow-primary/10"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -234,7 +234,7 @@ export function About() {
           {stack.map((s, i) => (
             <motion.article
               key={s.name}
-              className="group shimmer-sweep card-3d relative rounded-2xl border border-border/50 bg-bg-elevated/50 p-6 transition-all duration-500 hover:border-primary/50 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:shadow-primary/10"
+              className="group shimmer-sweep relative rounded-2xl border border-border/50 bg-bg-elevated/50 p-6 transition-all duration-500 hover:border-primary/50 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] hover:shadow-primary/10"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

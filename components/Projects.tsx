@@ -48,7 +48,7 @@ export function Projects() {
               key={project.title}
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }}
               transition={{ duration: 0.55 }}
-              className="group shimmer-sweep card-3d surface relative overflow-hidden rounded-[1.5rem] p-6 sm:p-8"
+              className="group shimmer-sweep surface relative overflow-hidden rounded-[1.5rem] p-6 sm:p-8"
               whileHover={{ y: -6 }}
             >
               <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-primary/8 blur-3xl transition duration-500 group-hover:bg-primary/15" aria-hidden="true" />

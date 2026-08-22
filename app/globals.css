@@ -387,19 +387,6 @@ section[id] {
   color: var(--text-muted);
 }
 
-/* ===== Timeline connector (Experience section) ===== */
-@media (min-width: 640px) {
-  .timeline-connector {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, var(--primary), var(--accent), transparent);
-    opacity: 0.3;
-  }
-}
-
 .section-container {
   max-width: 1280px;
   margin: 0 auto;
