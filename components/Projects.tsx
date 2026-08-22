@@ -26,7 +26,7 @@ export function Projects() {
           className="text-center"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6 }}
         >
           <SectionHeading
@@ -40,7 +40,7 @@ export function Projects() {
           className="mt-16 grid gap-6 lg:grid-cols-2"
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, amount: 0.2 }}
           variants={{ show: { transition: { staggerChildren: 0.12 } } }}
         >
           {projects.map((project, index) => (

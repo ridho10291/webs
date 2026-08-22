@@ -96,7 +96,7 @@ export function About() {
           className="text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7 }}
         >
           <SectionHeading
@@ -228,7 +228,7 @@ export function About() {
           className="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7, delay: 0.4 }}
         >
           {stack.map((s, i) => (

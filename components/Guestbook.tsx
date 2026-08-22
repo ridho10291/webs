@@ -85,7 +85,7 @@ export function Guestbook() {
           className="text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7 }}
         >
           <SectionHeading
@@ -174,7 +174,7 @@ export function Guestbook() {
           className="mt-12 space-y-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           {entries.length === 0 && (

@@ -72,7 +72,7 @@ export function Experience() {
           className="text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7 }}
         >
           <SectionHeading
@@ -93,7 +93,7 @@ export function Experience() {
                 className={`relative mb-16 last:mb-0 sm:mb-20 ${isLeft ? "sm:pr-[calc(50%_+_2.5rem)]" : "sm:pl-[calc(50%_+_2.5rem)]"}`}
                 initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
                 <motion.div

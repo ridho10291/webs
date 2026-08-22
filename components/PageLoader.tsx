@@ -10,15 +10,20 @@ export function PageLoader() {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem(STORAGE_KEY)) return;
-      localStorage.setItem(STORAGE_KEY, "1");
+      if (!localStorage.getItem(STORAGE_KEY)) {
+        localStorage.setItem(STORAGE_KEY, "1");
+        setShow(true);
+      }
     } catch {
       return;
     }
-    setShow(true);
+  }, []);
+
+  useEffect(() => {
+    if (!show) return;
     const timer = setTimeout(() => setShow(false), 700);
     return () => clearTimeout(timer);
-  }, []);
+  }, [show]);
 
   return (
     <AnimatePresence>
