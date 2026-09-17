@@ -3,15 +3,7 @@ export type GuestbookEntry = {
   name: string;
   message: string;
   createdAt: string;
-};
-
-export type ContactMessage = {
-  id: string;
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  createdAt: string;
+  avatar?: string;
 };
 
 export type ApiResponse<T = unknown> = {

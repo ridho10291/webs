@@ -37,11 +37,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const avatar = sanitizeText(String(body.avatar ?? ""), 100);
+
     const entry: GuestbookEntry = {
       id: getId(),
       name,
       message,
       createdAt: new Date().toISOString(),
+      ...(avatar ? { avatar } : {}),
     };
 
     await addGuestbook(entry);

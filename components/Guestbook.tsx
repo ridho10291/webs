@@ -1,226 +1,331 @@
 "use client";
-
-import { FormEvent, useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Loader2, MessageSquarePlus, Send, UserRound } from "lucide-react";
+import { useState, useEffect, useTransition } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  MessageSquare,
+  Send,
+  RefreshCw,
+  Clock,
+  User,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import type { GuestbookEntry } from "@/lib/types";
 import { SectionHeading } from "./SectionHeading";
 
-const STORAGE_KEY = "guestbook-name-v1";
+const EMOJI_AVATARS = ["👾", "🚀", "💻", "⚡", "🎨", "🌟", "🔥", "🔮"];
 
 export function Guestbook() {
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [error, setError] = useState("");
+  const [selectedEmoji, setSelectedEmoji] = useState("👾");
+  const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; msg: string }>({
+    type: "idle",
+    msg: "",
+  });
+  const [isPending, startTransition] = useTransition();
+
+  const fetchEntries = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/guestbook");
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.data)) {
+        setEntries(json.data);
+      }
+    } catch (err) {
+      console.error("Failed to load guestbook:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) setName(saved);
-    fetch("/api/guestbook", { cache: "no-store" })
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.ok) setEntries(json.data);
-      })
-      .catch(() => undefined);
+    fetchEntries();
   }, []);
 
-  async function onSubmit(e: FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !message.trim()) {
-      setStatus("error");
-      setError("Isi nama dan pesan dulu ya.");
+      setStatus({ type: "error", msg: "Nama dan pesan tidak boleh kosong." });
       return;
     }
-    setStatus("loading");
-    setError("");
 
-    try {
-      const res = await fetch("/api/guestbook", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), message: message.trim() }),
-      });
-      const json = await res.json();
+    startTransition(async () => {
+      try {
+        const res = await fetch("/api/guestbook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name.trim(),
+            message: message.trim(),
+            avatar: selectedEmoji,
+          }),
+        });
+        const json = await res.json();
 
-      if (!json.ok) {
-        setStatus("error");
-        setError(json.error || "Gagal menyimpan pesan.");
-        return;
+        if (json.ok && json.data) {
+          setEntries((prev) => [json.data, ...prev]);
+          setName("");
+          setMessage("");
+          setStatus({
+            type: "success",
+            msg: "Pesan Anda berhasil dikirim dan tersimpan di database!",
+          });
+          setTimeout(() => setStatus({ type: "idle", msg: "" }), 5000);
+        } else {
+          setStatus({
+            type: "error",
+            msg: json.error || "Gagal mengirim pesan, silakan coba lagi.",
+          });
+        }
+      } catch {
+        setStatus({
+          type: "error",
+          msg: "Terjadi gangguan jaringan, coba beberapa saat lagi.",
+        });
       }
-
-      setEntries((prev) => [json.data, ...prev]);
-      setMessage("");
-      localStorage.setItem(STORAGE_KEY, name.trim());
-      setStatus("success");
-      setTimeout(() => setStatus("idle"), 2500);
-    } catch {
-      setStatus("error");
-      setError("Koneksi bermasalah, coba lagi.");
-    }
-  }
-
-  function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     });
-  }
+  };
+
+  const formatDate = (isoString: string) => {
+    try {
+      const d = new Date(isoString);
+      return d.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return "Baru saja";
+    }
+  };
 
   return (
-    <section id="buku-tamu" className="relative py-24 sm:py-32 px-4">
-      <motion.div
-        className="absolute right-[10%] top-[5%] h-48 w-48 rounded-full bg-accent/10 blur-[100px]"
-        animate={{ scale: [1, 1.2, 0.9, 1], opacity: [0.2, 0.35, 0.15, 0.2] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        aria-hidden="true"
-      />
+    <section id="guestbook" className="relative py-24 scroll-mt-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          index="05"
+          fn="guestbook{}"
+          title="visitor log"
+          accent="'comments & notes'"
+        />
 
-      <div className="mx-auto max-w-4xl">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.7 }}
-        >
-          <SectionHeading
-            badge="Buku Tamu"
-            title="Tinggalkan jejak digital kamu 👋"
-            subtitle="Sapa, kritik, saran, atau cerita singkat — pesanmu muncul di sini real-time & masuk ke Telegram saya."
-          />
-        </motion.div>
-
-        <motion.form
-          onSubmit={onSubmit}
-          className="surface shimmer-sweep mt-12 rounded-2xl p-5 transition-all hover:border-primary/50 sm:p-6"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-        >
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <motion.div className="flex-1" whileHover={{ scale: 1.01 }}>
-              <label htmlFor="gb-name" className="sr-only">Nama</label>
-              <input
-                id="gb-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Nama kamu"
-                maxLength={40}
-                className="input-field w-full"
-              />
-            </motion.div>
-            <motion.div className="flex-1" whileHover={{ scale: 1.01 }}>
-              <label htmlFor="gb-message" className="sr-only">Pesan</label>
-              <input
-                id="gb-message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Tulis pesan kamu di sini..."
-                maxLength={500}
-                className="input-field w-full"
-              />
-            </motion.div>
-            <motion.button
-              type="submit"
-              disabled={status === "loading"}
-              className="btn-primary shrink-0 gap-2 whitespace-nowrap"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {status === "loading" ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  Mengirim...
-                </>
-              ) : (
-                <>
-                  <Send size={18} />
-                  Kirim
-                </>
-              )}
-            </motion.button>
-          </div>
-
-          {status === "success" && (
-            <motion.p
-              role="status"
-              className="mt-4 text-center text-sm font-medium text-primary"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-            >
-              ✓ Makasih! Pesan kamu sudah masuk & terkirim ke Telegram.
-            </motion.p>
-          )}
-          {status === "error" && (
-            <motion.p
-              role="alert"
-              className="mt-4 text-center text-sm font-medium text-error"
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-              ✕ {error}
-            </motion.p>
-          )}
-        </motion.form>
-
-        <motion.div
-          className="mt-12 space-y-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-        >
-          {entries.length === 0 && (
-            <motion.div
-              className="rounded-2xl border border-border/50 bg-bg-elevated/30 p-10 text-center"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <MessageSquarePlus size={48} className="mx-auto mb-4 text-text-muted" />
-              <p className="text-text-muted">Belum ada pesan. Jadikan kamu yang pertama! 🎉</p>
-            </motion.div>
-          )}
-          {entries.map((entry, i) => (
-            <motion.article
-              key={entry.id}
-              className="group shimmer-sweep relative overflow-hidden rounded-2xl border border-border/50 bg-bg-elevated/50 p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
-              initial={{ opacity: 0, y: 20, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: i * 0.06, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ y: -3 }}
-            >
-              <div className="flex items-start gap-4">
-                <motion.div
-                  className="flex-shrink-0 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/20"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <UserRound size={20} className="text-primary" />
-                </motion.div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <span className="font-semibold text-text">{entry.name}</span>
-                    <span className="text-xs text-text-muted">{formatDate(entry.createdAt)}</span>
-                  </div>
-                  <motion.p
-                    className="mt-2 text-text-muted leading-relaxed break-words"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    {entry.message}
-                  </motion.p>
-                </div>
+        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-12">
+          {/* Left: REPL form */}
+          <motion.div
+            initial={{ opacity: 0, x: -16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6 }}
+            className="h-full lg:col-span-5"
+          >
+            <div className="code-window h-full">
+              <div className="titlebar">
+                <span className="dot d-close" />
+                <span className="dot d-min" />
+                <span className="dot d-max" />
+                <span className="ml-2 font-mono text-[11px] text-[#5f6f66]">guestbook.sh — new entry</span>
               </div>
-            </motion.article>
-          ))}
-        </motion.div>
+
+              <form onSubmit={handleSubmit} className="flex h-full flex-col p-5 font-mono sm:p-6">
+                {/* Avatar selector */}
+                <div>
+                  <label className="code-label">// avatar</label>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {EMOJI_AVATARS.map((emoji) => (
+                      <button
+                        key={emoji}
+                        type="button"
+                        onClick={() => setSelectedEmoji(emoji)}
+                        className={`flex h-9 w-9 items-center justify-center rounded border text-base transition-all ${
+                          selectedEmoji === emoji
+                            ? "border-[#8fff4a]/70 bg-[#8fff4a]/12 shadow-[0_0_14px_rgba(143,255,74,0.25)]"
+                            : "border-[#1d2a24] hover:border-[#1d2a24] hover:bg-[#12160f]"
+                        }`}
+                        aria-label={`Avatar ${emoji}`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Name */}
+                <div className="mt-4">
+                  <label
+                    htmlFor="guest-name"
+                    className="code-label"
+                  >
+                    <span className="text-[#8fff4a]">$</span> guest name:
+                  </label>
+                  <div className="relative mt-1.5">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#3d4f45]">
+                      <User className="h-3.5 w-3.5" />
+                    </div>
+                    <input
+                      id="guest-name"
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. John Doe"
+                      maxLength={40}
+                      className="field-in pl-9"
+                    />
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div className="mt-4">
+                  <label
+                    htmlFor="guest-message"
+                    className="code-label"
+                  >
+                    <span className="text-[#8fff4a]">$</span> message:
+                  </label>
+                  <textarea
+                    id="guest-message"
+                    required
+                    rows={4}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Keren portofolionya! Sukses selalu bro..."
+                    maxLength={500}
+                    className="field-in mt-1.5 resize-none"
+                  />
+                </div>
+
+                {/* Status */}
+                <AnimatePresence>
+                  {status.type !== "idle" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className={`mt-4 flex items-start gap-2 rounded border p-3 text-[11px] ${
+                        status.type === "success"
+                          ? "border-[#8fff4a]/40 bg-[#8fff4a]/8 text-[#8fff4a]"
+                          : "border-[#ffb020]/40 bg-[#ffb020]/8 text-[#ffb020]"
+                      }`}
+                    >
+                      {status.type === "success" ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                      ) : (
+                        <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                      )}
+                      <span>{status.msg}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="btn-exec mt-5 w-full py-3"
+                >
+                  {isPending ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin" />
+                      writing to db...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-3.5 w-3.5" />
+                      $ git push --message
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </motion.div>
+
+          {/* Right: comment log */}
+          <motion.div
+            initial={{ opacity: 0, x: 16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6 }}
+            className="h-full lg:col-span-7"
+          >
+            <div className="code-window h-full">
+              <div className="titlebar">
+                <span className="dot d-close" />
+                <span className="dot d-min" />
+                <span className="dot d-max" />
+                <span className="ml-2 font-mono text-[11px] text-[#5f6f66]">tail -f /logs/comments</span>
+                <span className="ml-auto flex items-center gap-2">
+                  <span className="hidden font-mono text-[10px] text-[#3d4f45] sm:block">
+                    {entries.length} entries
+                  </span>
+                  <button
+                    type="button"
+                    onClick={fetchEntries}
+                    className="flex h-7 w-7 items-center justify-center rounded border border-[#1d2a24] text-[#5f6f66] transition-colors hover:border-[#8fff4a]/60 hover:text-[#8fff4a]"
+                    title="Refresh comments"
+                  >
+                    <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+                  </button>
+                </span>
+              </div>
+
+              <div className="max-h-[520px] space-y-2.5 overflow-y-auto p-4 sm:p-5">
+                {loading && entries.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <RefreshCw className="h-5 w-5 animate-spin text-[#8fff4a]" />
+                    <p className="mt-3 font-mono text-[11px] text-[#5f6f66]">
+                      fetching entries from db...
+                    </p>
+                  </div>
+                ) : entries.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <MessageSquare className="h-8 w-8 text-[#3d4f45]" />
+                    <p className="mt-3 font-mono text-[12px] font-semibold text-[#d7f6c8]">
+                      // no entries yet
+                    </p>
+                    <p className="mt-1 font-mono text-[11px] text-[#5f6f66]">
+                      Jadilah orang pertama yang meninggalkan pesan!
+                    </p>
+                  </div>
+                ) : (
+                  entries.map((item, idx) => (
+                    <motion.div
+                      key={item.id || idx}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: Math.min(idx * 0.04, 0.4) }}
+                      className="rec p-3.5"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-[#1d2a24] bg-[#12160f] text-sm">
+                            {item.avatar || "👾"}
+                          </span>
+                          <span className="truncate font-mono text-[12px] font-bold text-[#d7f6c8]">
+                            {item.name}
+                          </span>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-1 font-mono text-[9.5px] text-[#3d4f45]">
+                          <Clock className="h-3 w-3" />
+                          <span>{formatDate(item.createdAt)}</span>
+                        </div>
+                      </div>
+                      <p className="mt-2 pl-9 font-mono text-[11.5px] leading-relaxed text-[#5f6f66]">
+                        <span className="mr-1 text-[#3d4f45]">›</span>
+                        {item.message}
+                      </p>
+                    </motion.div>
+                  ))
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

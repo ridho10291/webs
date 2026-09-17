@@ -11,18 +11,10 @@ type DbShape = {
     message: string;
     createdAt: string;
   }>;
-  contacts: Array<{
-    id: string;
-    name: string;
-    email: string;
-    subject: string;
-    message: string;
-    createdAt: string;
-  }>;
   visitors: number;
 };
 
-const emptyDb: DbShape = { guestbook: [], contacts: [], visitors: 0 };
+const emptyDb: DbShape = { guestbook: [], visitors: 0 };
 
 function ensureFile() {
   if (!fs.existsSync(DATA_DIR)) {
@@ -60,15 +52,6 @@ export function addGuestbookLocal(entry: DbShape["guestbook"][number]) {
   db.guestbook.push(entry);
   if (db.guestbook.length > 500) {
     db.guestbook = db.guestbook.slice(-500);
-  }
-  writeDb(db);
-}
-
-export function addContactLocal(contact: DbShape["contacts"][number]) {
-  const db = readDb();
-  db.contacts.push(contact);
-  if (db.contacts.length > 500) {
-    db.contacts = db.contacts.slice(-500);
   }
   writeDb(db);
 }

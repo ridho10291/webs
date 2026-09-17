@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { ContactMessage } from "@/lib/types";
-import { addContact } from "@/lib/storage";
 import { sendTelegramNotification } from "@/lib/telegram";
-import { getId, isValidEmail, sanitizeText } from "@/lib/utils";
+import { sanitizeText } from "@/lib/utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,43 +9,40 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const name = sanitizeText(String(body.name ?? ""), 40);
-    const email = sanitizeText(String(body.email ?? ""), 80).toLowerCase();
-    const subject = sanitizeText(String(body.subject ?? ""), 100);
-    const message = sanitizeText(String(body.message ?? ""), 2000);
+    const name = sanitizeText(String(body.name ?? ""), 60);
+    const email = sanitizeText(String(body.email ?? ""), 100);
+    const subject = sanitizeText(String(body.subject ?? "Portofolio Contact"), 100);
+    const message = sanitizeText(String(body.message ?? ""), 1000);
 
     if (name.length < 2) {
       return NextResponse.json({ ok: false, error: "Nama minimal 2 karakter" }, { status: 400 });
     }
-    if (!isValidEmail(email)) {
-      return NextResponse.json({ ok: false, error: "Email tidak valid" }, { status: 400 });
+    if (!email.includes("@") || email.length < 5) {
+      return NextResponse.json({ ok: false, error: "Format email tidak valid" }, { status: 400 });
     }
-    if (message.length < 10) {
-      return NextResponse.json(
-        { ok: false, error: "Pesan minimal 10 karakter" },
-        { status: 400 }
-      );
+    if (message.length < 5) {
+      return NextResponse.json({ ok: false, error: "Pesan minimal 5 karakter" }, { status: 400 });
     }
 
-    const contact: ContactMessage = {
-      id: getId(),
-      name,
-      email,
-      subject: subject || "(tanpa subjek)",
-      message,
-      createdAt: new Date().toISOString(),
-    };
-
-    await addContact(contact);
-
+    // Send Telegram alert to owner
     await sendTelegramNotification(
-      `✉️ <b>Pesan Baru dari Website</b>\n👤 <b>${escapeHtml(contact.name)}</b>\n📧 ${escapeHtml(contact.email)}\n📌 ${escapeHtml(contact.subject)}\n\n💬 ${escapeHtml(contact.message)}`
+      `📩 <b>Pesan Kontak Baru Dari Portofolio!</b>\n\n` +
+      `👤 <b>Nama:</b> ${escapeHtml(name)}\n` +
+      `📧 <b>Email:</b> ${escapeHtml(email)}\n` +
+      `📌 <b>Subjek:</b> ${escapeHtml(subject)}\n` +
+      `💬 <b>Pesan:</b>\n${escapeHtml(message)}`
     );
 
-    return NextResponse.json({ ok: true, data: contact }, { status: 201 });
+    return NextResponse.json(
+      { ok: true, message: "Pesan berhasil dikirim! Saya akan segera merespons." },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("contact POST error:", error);
-    return NextResponse.json({ ok: false, error: "Terjadi kesalahan" }, { status: 500 });
+    console.error("Contact API error:", error);
+    return NextResponse.json(
+      { ok: false, error: "Terjadi kesalahan saat memproses pesan Anda." },
+      { status: 500 }
+    );
   }
 }
 

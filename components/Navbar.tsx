@@ -1,144 +1,166 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
-import { useEffect, useState } from "react";
-import { ArrowUpRight, Bot, Menu, X } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUpRight, Menu, X, Terminal } from "lucide-react";
 import { siteConfig } from "@/data/site";
+import { FloatingAudio } from "./FloatingAudio";
 
-const links = [
-  { href: "#tentang", label: "Tentang" },
-  { href: "#pengalaman", label: "Pengalaman" },
-  { href: "#proyek", label: "Karya" },
-  { href: "#buku-tamu", label: "Feedback" },
+const NAV_ITEMS = [
+  { label: "hero", href: "#hero" },
+  { label: "about", href: "#about" },
+  { label: "stack", href: "#skills" },
+  { label: "projects", href: "#projects" },
+  { label: "certs", href: "#certificates" },
+  { label: "guestbook", href: "#guestbook" },
+  { label: "contact", href: "#contact" },
 ];
 
 export function Navbar() {
-  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState("#beranda");
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 14);
-    handleScroll();
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      const sections = NAV_ITEMS.map((item) => item.href.substring(1));
+      const scrollPosition = window.scrollY + 180;
+
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(sectionId);
+            break;
+          }
+        }
+      }
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const sections = ["beranda", "tentang", "pengalaman", "proyek", "buku-tamu", "kontak"]
-      .map((id) => document.getElementById(id))
-      .filter((section): section is HTMLElement => Boolean(section));
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting);
-        if (visible) setActive(`#${visible.target.id}`);
-      },
-      { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
-
-  const linkClass = (href: string) =>
-    `relative rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
-      active === href ? "text-text" : "text-text-muted hover:text-text"
-    }`;
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5">
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 top-0 h-0.5 origin-left bg-gradient-to-r from-primary via-accent to-secondary"
-        style={{ scaleX: progress }}
-        aria-hidden="true"
-      />
-      <nav
-        className={`pointer-events-auto mx-auto flex h-16 max-w-6xl items-center justify-between rounded-2xl border px-3 transition-all duration-300 sm:px-4 ${
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div
+        className={`transition-all duration-300 ${
           scrolled
-            ? "border-border/90 bg-bg/80 shadow-[0_14px_40px_rgba(0,0,0,0.24)] backdrop-blur-2xl"
-            : "border-transparent bg-transparent"
+            ? "border-b border-[#1d2a24] bg-[#05060a]/90 shadow-[0_8px_40px_-16px_rgba(0,0,0,0.9)]"
+            : "border-b border-transparent bg-transparent"
         }`}
-        aria-label="Navigasi utama"
       >
-        <Link href="#beranda" className="group flex items-center gap-2.5" aria-label="Ke beranda">
-          <motion.span
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/15"
-            whileHover={{ scale: 1.08, rotate: [0, -5, 5, 0] }}
-          >
-            <Bot size={21} className="text-bg" />
-          </motion.span>
-          <span className="text-lg font-bold tracking-tight text-text">
-            {siteConfig.name}<span className="text-primary">.</span>
-          </span>
-        </Link>
-
-        <div className="hidden items-center gap-1 md:flex">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={linkClass(link.href)}
-              aria-current={active === link.href ? "true" : undefined}
-            >
-              {link.label}
-              {active === link.href && (
-                <motion.span
-                  layoutId="nav-active"
-                  className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent"
-                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
-                />
-              )}
-            </Link>
-          ))}
-          <div className="mx-2 h-5 w-px bg-border/70" aria-hidden="true" />
-          <ThemeToggle />
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+          {/* Brand — a running prompt */}
           <Link
-            href="#kontak"
-            className="ml-2 inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-accent px-3.5 py-2 text-sm font-bold text-bg shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:shadow-primary/40"
+            href="/"
+            className="group flex items-center gap-2.5 font-mono text-sm font-bold tracking-tight text-[#d7f6c8]"
           >
-            Hubungi saya
-            <ArrowUpRight size={15} />
+            <Terminal className="h-4 w-4 text-[#8fff4a]" />
+            <span className="text-[#d7f6c8] transition-colors group-hover:text-[#8fff4a]">
+              ridho.dev
+            </span>
+            <span className="cursor-block" aria-hidden="true" />
           </Link>
-        </div>
 
-        <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            aria-expanded={open}
-            aria-label={open ? "Tutup menu" : "Buka menu"}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/70 bg-bg-elevated/60 text-text transition hover:border-primary/60 hover:text-primary"
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </nav>
+          {/* Desktop Nav — code outline of the running page */}
+          <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+            {NAV_ITEMS.map((item, i) => {
+              const isActive = activeSection === item.href.substring(1);
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className={`group relative px-3 py-1.5 font-mono text-[11.5px] tracking-wide transition-colors duration-200 ${
+                    isActive
+                      ? "text-[#8fff4a]"
+                      : "text-[#5f6f66] hover:text-[#d7f6c8]"
+                  }`}
+                >
+                  <span className="mr-1 text-[#3d4f45]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {item.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-caret"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      className="absolute -bottom-[3px] left-3 right-3 h-0.5 bg-[#8fff4a] shadow-[0_0_8px_rgba(143,255,74,0.8)]"
+                    />
+                  )}
+                </a>
+              );
+            })}
+          </nav>
 
+          {/* Right Actions */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <FloatingAudio />
+
+            <a
+              href={siteConfig.resumeUrl}
+              className="group hidden items-center gap-1.5 rounded border border-[#1d2a24] px-3.5 py-1.5 font-mono text-[11.5px] font-semibold text-[#d7f6c8] transition-all duration-300 hover:border-[#8fff4a]/50 hover:text-[#8fff4a] sm:flex"
+            >
+              resume.tsx
+              <ArrowUpRight className="h-3.5 w-3.5 text-[#5f6f66] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#8fff4a]" />
+            </a>
+
+            {/* Mobile Menu Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex h-9 w-9 items-center justify-center rounded border border-[#1d2a24] text-[#d7f6c8] md:hidden"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Drawer */}
       <AnimatePresence>
-        {open && (
+        {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            transition={{ duration: 0.18 }}
-            className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border border-border/90 bg-bg/95 p-2 shadow-2xl backdrop-blur-2xl md:hidden"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mx-4 mt-2 code-window md:hidden"
           >
-            {[...links, { href: "#kontak", label: "Hubungi saya" }].map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition ${active === link.href ? "bg-primary/10 text-primary" : "text-text-muted hover:bg-bg-elevated hover:text-text"}`}
+            <nav className="flex flex-col gap-1 p-3">
+              {NAV_ITEMS.map((item, i) => (
+                <motion.a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.04, duration: 0.25 }}
+                  className="flex items-center justify-between rounded px-3 py-2.5 font-mono text-[13px] text-[#d7f6c8] transition-colors hover:bg-[#12160f] hover:text-[#8fff4a]"
+                >
+                  <span>
+                    <span className="mr-2 text-[#3d4f45]">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {item.label}
+                  </span>
+                  <span className="text-[#8fff4a]">→</span>
+                </motion.a>
+              ))}
+              <a
+                href={siteConfig.resumeUrl}
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-2 flex items-center justify-center gap-1.5 rounded border border-[#8fff4a]/40 py-2.5 font-mono text-[12px] font-semibold text-[#8fff4a]"
               >
-                {link.label}
-                <ArrowUpRight size={16} />
-              </Link>
-            ))}
+                resume.tsx
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
